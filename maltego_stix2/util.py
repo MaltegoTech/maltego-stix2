@@ -4,7 +4,8 @@ import dateutil.parser, json
 from maltego_trx.maltego import MaltegoMsg, MaltegoTransform, MaltegoEntity
 from stix2.base import _STIXBase
 from stix2.exceptions import MissingPropertiesError, PropertyPresenceError, ObjectConfigurationError
-from stix2.parsing import dict_to_stix2, _detect_spec_version, STIX2_OBJ_MAPS
+from stix2.parsing import dict_to_stix2, detect_spec_version
+from stix2.registry import STIX2_OBJ_MAPS
 from stix2.properties import TimestampProperty
 
 from maltego_stix2.config import (
@@ -14,7 +15,7 @@ from maltego_stix2.config import (
 )
 
 def get_stix_type(stix_dict):
-    v = _detect_spec_version(stix_dict)
+    v = detect_spec_version(stix_dict)
     OBJ_MAP = dict(STIX2_OBJ_MAPS[v]['objects'], **STIX2_OBJ_MAPS[v]['observables'])
     return OBJ_MAP.get(stix_dict['type'])
 
@@ -135,14 +136,14 @@ def maltego_to_stix2(
                     if transform is not None:
                         transform.addUIMessage(
                             f"Warning: STIX2 conversion of property {prop_name} failed, it was added as {new_name} instead",
-                            "PartialError"
+                            "Debug"
                         )
                     res_dict[new_name] = prop_value
                 else:
                     if transform is not None:
                         transform.addUIMessage(
                             f"Warning: STIX2 conversion of property {prop_name} failed and it was removed from the output",
-                            "PartialError"
+                            "Inform"
                         )
                     del res_dict[prop_name]
     elif "id" not in res_dict:
@@ -192,20 +193,20 @@ def maltego_to_stix2(
                     f"Warning: Strict STIX2 conversion of object failed, "
                     f"object will be returned as-is and may not be fully STIX2 compliant. "
                     f"Reason of conversion failure: {reason}",
-                    "PartialError"
+                    "Debug"
                 )
         else:
             if transform is not None:
                 transform.addUIMessage(
                     f"Error: Strict STIX2 conversion of object failed, no output will be returned. "
                     f"Reason of failure: {reason}",
-                    "PartialError"
+                    "Inform"
                 )
             stix2_object = None
 
     for r in extra_reasons:
         if transform is not None:
-            transform.addUIMessage(r, "PartialError")
+            transform.addUIMessage(r, "Inform")
 
     return stix2_object
 
