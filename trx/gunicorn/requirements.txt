@@ -1,4 +1,3 @@
-Pillow==10.3.0
 maltego-trx==1.6.0
-stix2==3.0.1
 python-dateutil==2.8.1
+maltego-stix2>=2.1.5
