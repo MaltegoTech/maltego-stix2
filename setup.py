@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 dependencies = [
-    'Pillow==9.2.0',
+    'Pillow==10.3.0',
     'maltego-trx==1.6.0',
     'stix2==3.0.1',
     'python-dateutil==2.8.1'
